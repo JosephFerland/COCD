@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse de la Cybersécurité - Juin 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Slate & Sky Blue -->
+    <!-- Application Structure Plan: J'ai conçu cette application comme un tableau de bord thématique à page unique, plutôt que de suivre la structure linéaire du rapport. Une barre de navigation fixe permet de sauter directement aux sections d'intérêt : une vue d'ensemble, une analyse des menaces mondiales, une exploration du double rôle de l'IA, et une comparaison à onglets des réponses des gouvernements fédéral et québécois. Cette structure facilite la comparaison et la synthèse d'informations connexes. L'interactivité est centrée sur des cartes informatives, des onglets et des graphiques dynamiques pour permettre à l'utilisateur d'explorer les données à son propre rythme. Cette approche a été choisie pour transformer un rapport dense en une expérience d'apprentissage engageante et non linéaire, améliorant la rétention et la compréhension de l'utilisateur. -->
+    <!-- Visualization & Content Choices: 1. Menaces Globales -> Objectif: Informer -> Graphique à barres Chart.js pour les vulnérabilités de Microsoft -> Interaction: Infobulles au survol -> Justification: Visualise quantitativement l'ampleur du "Patch Tuesday". 2. Risques IA -> Objectif: Montrer la proportion -> Graphique en anneau Chart.js pour les incidents "Shadow AI" -> Interaction: Infobulles -> Justification: Met en évidence un risque interne majeur de manière percutante. 3. Défis du Québec -> Objectif: Comparer/Informer -> Graphique à barres horizontales Chart.js pour les cibles d'attaques -> Interaction: Infobulles -> Justification: Concrétise les menaces spécifiques à la province. Des cartes interactives et des onglets organisent le contenu qualitatif pour une exploration facile. Toutes les visualisations sont réalisées via Canvas avec Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            width: 100%;
+            max-width: 600px; /* Limite la largeur max pour la lisibilité */
+            height: 320px; /* Hauteur de base */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px; /* Hauteur plus grande sur les grands écrans */
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0284c7; /* sky-600 */
+            border-bottom-color: #0284c7; /* sky-600 */
+        }
+        .tab-btn.active {
+            background-color: #0369a1; /* sky-700 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .info-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">
+                    <span class="text-sky-600">COCD</span><span class="font-light">Actualités</span>
+                </h1>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#synthese" class="nav-link text-sm font-medium text-slate-600 border-b-2 border-transparent pb-1">Synthèse</a>
+                    <a href="#menaces" class="nav-link text-sm font-medium text-slate-600 border-b-2 border-transparent pb-1">Menaces Globales</a>
+                    <a href="#ia" class="nav-link text-sm font-medium text-slate-600 border-b-2 border-transparent pb-1">Le Rôle de l'IA</a>
+                    <a href="#reponse-canada" class="nav-link text-sm font-medium text-slate-600 border-b-2 border-transparent pb-1">Réponse Canadienne</a>
+                    <a href="#conclusion" class="nav-link text-sm font-medium text-slate-600 border-b-2 border-transparent pb-1">Conclusion</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 md:py-12">
+
+        <!-- Section Synthèse -->
+        <section id="synthese" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Paysage des Cybermenaces en Juin 2025</h2>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
+                Un aperçu des développements critiques en cybersécurité depuis le 10 juin 2025. Cette analyse révèle un paysage de menaces en évolution rapide, où l'intelligence artificielle est à la fois une arme pour les attaquants et un bouclier pour les défenseurs, exigeant une vigilance et une adaptation constantes de la part des gouvernements et des entreprises.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/60">
+                    <div class="text-sky-600 text-4xl font-bold">66</div>
+                    <p class="text-slate-600 mt-2 font-medium">Vulnérabilités Corrigées</p>
+                    <p class="text-sm text-slate-500">par Microsoft, dont 2 zero-days exploités.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/60">
+                    <div class="text-sky-600 text-4xl font-bold">10</div>
+                    <p class="text-slate-600 mt-2 font-medium">Opérations d'IA Malveillantes</p>
+                    <p class="text-sm text-slate-500">liées à des États, fermées par OpenAI.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/60">
+                    <div class="text-sky-600 text-4xl font-bold">6+ Mds</div>
+                    <p class="text-slate-600 mt-2 font-medium">Tentatives d'Attaques</p>
+                    <p class="text-sm text-slate-500">au Canada au T1 2025 (selon Fortinet).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Menaces Globales -->
+        <section id="menaces" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 text-center">Menaces et Vulnérabilités Mondiales</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Les cybercriminels et les acteurs étatiques exploitent continuellement les failles logicielles et les chaînes d'approvisionnement. Cette section met en lumière les incidents les plus significatifs récents, démontrant la nécessité d'une gestion des correctifs rapide et d'une vigilance accrue.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="space-y-6">
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-slate-200/60">
+                        <h3 class="font-bold text-lg text-slate-800">Patch Tuesday de Microsoft</h3>
+                        <p class="text-slate-600 mt-2">Correction de 66 vulnérabilités, incluant deux failles zero-day critiques affectant WebDAV et SMB, activement exploitées par des attaquants.</p>
+                    </div>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-slate-200/60">
+                        <h3 class="font-bold text-lg text-slate-800">Botnets Mirai sur Wazuh</h3>
+                        <p class="text-slate-600 mt-2">Deux nouvelles variantes (Lzrd, Resgod) exploitent une faille critique dans la plateforme de sécurité Wazuh pour infecter des appareils IoT, compromettant les outils de défense mêmes.</p>
+                    </div>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-slate-200/60">
+                        <h3 class="font-bold text-lg text-slate-800">Chaîne d'Approvisionnement npm</h3>
+                        <p class="text-slate-600 mt-2">Des paquets malveillants comme `express-api-sync` ont été découverts, contenant des portes dérobées capables d'effacer entièrement les systèmes des développeurs.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-slate-200/60">
+                        <h3 class="text-lg font-semibold text-center mb-4 text-slate-800">Analyse du Patch Tuesday (Juin 2025)</h3>
+                        <div class="chart-container">
+                            <canvas id="vulnerabilitiesChart"></canvas>
+                        </div>
+                         <p class="text-xs text-slate-500 text-center mt-4">Le graphique illustre le volume des correctifs publiés par Microsoft, mettant en évidence la menace constante et le danger particulier des failles "zero-day".</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section IA -->
+        <section id="ia" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 text-center">L'IA : Arme et Bouclier</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                L'intelligence artificielle transforme la cybersécurité. Elle est devenue un outil de choix pour les attaquants pour créer des menaces sophistiquées, mais elle est aussi essentielle pour les défenses modernes. Cette dualité crée une course aux armements technologique.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <!-- Colonne Menaces IA -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-red-600 text-center">⚔️ L'IA comme Menace</h3>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-red-200">
+                        <h4 class="font-bold text-lg text-slate-800">IA Offensive</h4>
+                        <p class="text-slate-600 mt-2">Des outils comme "WormGPT" et "FraudGPT" démocratisent la création d'hameçonnages personnalisés et d'autres attaques, abaissant la barrière technique pour les cybercriminels.</p>
+                    </div>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-red-200">
+                        <h4 class="font-bold text-lg text-slate-800">"Shadow AI" en Entreprise</h4>
+                        <p class="text-slate-600 mt-2">L'utilisation non contrôlée d'outils d'IA par les employés a fait plus que doubler les incidents de fuite de données (DLP), créant une surface d'attaque interne massive et souvent invisible.</p>
+                    </div>
+                     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-slate-200/60">
+                        <h3 class="text-lg font-semibold text-center mb-4 text-slate-800">Incidents de Sécurité Liés à l'IA Générative</h3>
+                        <div class="chart-container h-64 md:h-80">
+                            <canvas id="shadowAiChart"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-500 text-center mt-4">Le "Shadow AI" est un risque majeur, représentant une part croissante des incidents de sécurité SaaS. Cliquez sur les segments pour voir les détails.</p>
+                    </div>
+                </div>
+                <!-- Colonne Défenses IA -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-green-600 text-center">🛡️ L'IA comme Défense</h3>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-green-200">
+                        <h4 class="font-bold text-lg text-slate-800">Détection et Réponse Automatisées</h4>
+                        <p class="text-slate-600 mt-2">Des plateformes comme Datadog utilisent des agents IA ("Bits AI") pour analyser les menaces, automatiser la réponse aux incidents et surveiller la conformité des systèmes complexes.</p>
+                    </div>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-green-200">
+                        <h4 class="font-bold text-lg text-slate-800">Formation Immersive</h4>
+                        <p class="text-slate-600 mt-2">Des outils comme "Threat Simulator" de Huntress permettent aux équipes de sécurité de s'entraîner contre des scénarios d'attaque réalistes, renforçant la résilience de manière pratique.</p>
+                    </div>
+                    <div class="info-card bg-white p-6 rounded-xl shadow-lg border border-green-200">
+                        <h4 class="font-bold text-lg text-slate-800">Sécurité des API et des Navigateurs</h4>
+                        <p class="text-slate-600 mt-2">Des guides et outils dédiés (APIContext, BrowserTotal™) émergent pour sécuriser les points d'entrée critiques des applications modernes, souvent ciblés par les attaques.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Réponse Canadienne -->
+        <section id="reponse-canada" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 text-center">La Réponse Canadienne</h2>
+             <p class="max-w-3xl mx-auto text-center text-slate-600 mb-12">
+                Face à ces menaces, les gouvernements fédéral et québécois déploient des stratégies, des investissements et des initiatives pour renforcer la cyber-résilience nationale et provinciale. Explorez les actions clés de chaque palier de gouvernement.
+            </p>
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-center mb-8 bg-slate-100 p-2 rounded-xl shadow-inner">
+                    <button id="tab-fed-btn" class="tab-btn active w-1/2 py-3 px-4 rounded-lg font-semibold">Gouvernement Fédéral</button>
+                    <button id="tab-qc-btn" class="tab-btn w-1/2 py-3 px-4 rounded-lg font-semibold text-slate-600">Gouvernement du Québec</button>
+                </div>
+
+                <div id="tab-fed-content" class="tab-content">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="font-bold text-lg text-slate-800">Centre canadien pour la cybersécurité (CCC)</h4>
+                            <p class="text-slate-600 mt-2">Publication continue d'avis de sécurité et de rapports sur les menaces, notamment celles facilitées par l'IA contre le processus démocratique et les activités parrainées par des États.</p>
+                        </div>
+                        <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="font-bold text-lg text-slate-800">Défense Nationale (MDN)</h4>
+                            <p class="text-slate-600 mt-2">Augmentation des dépenses de défense et mise en place de formations obligatoires en cybersécurité pour tout le personnel, renforçant la posture de sécurité de base.</p>
+                        </div>
+                        <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="font-bold text-lg text-slate-800">Stratégie Nationale 2025</h4>
+                            <p class="text-slate-600 mt-2">Pilotée par Sécurité publique Canada, elle vise à renforcer les partenariats, positionner le Canada comme un leader et protéger les infrastructures critiques.</p>
+                        </div>
+                         <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="font-bold text-lg text-slate-800">Sécurité de la Chaîne d'Approvisionnement</h4>
+                            <p class="text-slate-600 mt-2">Un nouveau programme vise à imposer un niveau de base en cybersécurité pour tous les fournisseurs du MDN afin de protéger les informations sensibles.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab-qc-content" class="tab-content hidden">
+                     <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="space-y-6">
+                            <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                                <h4 class="font-bold text-lg text-slate-800">Stratégie et Gouvernance</h4>
+                                <p class="text-slate-600 mt-2">Le Ministère de la Cybersécurité et du Numérique (MCN) et le Centre gouvernemental de cyberdéfense (CGCD) pilotent la stratégie 2024-2028, avec des initiatives comme les primes aux bogues.</p>
+                            </div>
+                            <div class="info-card bg-white p-6 rounded-xl shadow-lg">
+                                <h4 class="font-bold text-lg text-slate-800">Investissements et Écosystème</h4>
+                                <p class="text-slate-600 mt-2">Des collaborations public-privé fortes, comme la subvention de 1,3M$ de Google à l'IMC2, et des événements locaux (conférence Laval économique) stimulent l'innovation et la formation.</p>
+                            </div>
+                        </div>
+                        <div>
+                             <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-slate-200/60">
+                                <h3 class="text-lg font-semibold text-center mb-4 text-slate-800">Défis Spécifiques au Québec</h3>
+                                <div class="chart-container">
+                                    <canvas id="quebecThreatsChart"></canvas>
+                                </div>
+                                <p class="text-xs text-slate-500 text-center mt-4">Le Québec est une cible croissante. Le graphique montre les domaines particulièrement vulnérables qui nécessitent une attention stratégique.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Conclusion -->
+        <section id="conclusion" class="scroll-mt-20 bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-slate-200/60">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 text-center">Conclusion et Perspectives Stratégiques</h2>
+            <p class="max-w-3xl mx-auto text-center text-slate-600 mb-10">
+                L'analyse des événements récents dessine un futur où la cyber-résilience dépendra de notre capacité à innover et à collaborer plus vite que nos adversaires.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-800">Défis Majeurs à Relever</h3>
+                    <ul class="space-y-3 list-disc list-inside text-slate-600">
+                        <li>Suivre le rythme effréné des menaces pilotées par l'IA.</li>
+                        <li>Combler le déficit de compétences, surtout au sein des PME.</li>
+                        <li>Sécuriser la prolifération des objets connectés (IoT) et des technologies opérationnelles (OT).</li>
+                        <li>Développer une gouvernance agile de l'IA qui n'étouffe pas l'innovation.</li>
+                        <li>Assurer un partage d'informations fluide entre les secteurs public et privé.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-800">Opportunités Stratégiques</h3>
+                    <ul class="space-y-3 list-disc list-inside text-slate-600">
+                        <li>Exploiter l'IA pour une cyberdéfense prédictive et proactive.</li>
+                        <li>Positionner le Canada et le Québec comme des pôles d'excellence en cybersécurité.</li>
+                        <li>Renforcer les partenariats internationaux pour une lutte coordonnée.</li>
+                        <li>Améliorer la résilience globale par la formation et la sensibilisation du public.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 mt-12 border-t border-slate-200">
+        <p class="text-slate-500 text-sm">Application interactive basée sur le rapport "COCD_Bulletin_Cybersécurité_09 juin 2025", Juin 2025.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const vulnerabilitiesChartCtx = document.getElementById('vulnerabilitiesChart');
+            if (vulnerabilitiesChartCtx) {
+                new Chart(vulnerabilitiesChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Correctifs Standards', 'Failles Zero-Day Exploitées'],
+                        datasets: [{
+                            label: 'Nombre de Vulnérabilités',
+                            data: [64, 2],
+                            backgroundColor: [
+                                'rgba(56, 189, 248, 0.6)', // sky-400
+                                'rgba(239, 68, 68, 0.6)'    // red-500
+                            ],
+                            borderColor: [
+                                'rgba(14, 165, 233, 1)', // sky-500
+                                'rgba(220, 38, 38, 1)'     // red-600
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Nombre de Failles' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y;
+                                        }
+                                        if (context.dataIndex === 1) {
+                                           return label + ' (Haute Urgence)';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const shadowAiChartCtx = document.getElementById('shadowAiChart');
+            if(shadowAiChartCtx) {
+                new Chart(shadowAiChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Incidents liés à l\'IA Générative ("Shadow AI")', 'Autres Incidents de Sécurité SaaS'],
+                        datasets: [{
+                            label: 'Part des Incidents de Sécurité',
+                            data: [14, 86],
+                            backgroundColor: [
+                                'rgba(239, 68, 68, 0.7)', // red-500
+                                'rgba(59, 130, 246, 0.6)'  // blue-500
+                            ],
+                             borderColor: [
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `${context.label}: ${context.parsed}%`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            const quebecThreatsChartCtx = document.getElementById('quebecThreatsChart');
+            if (quebecThreatsChartCtx) {
+                 new Chart(quebecThreatsChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Vulnérabilité des PME', 'Ciblage des Tech. Opérationnelles (OT)', 'Arsenalisation de l\'IA (ex: WormGPT)'],
+                        datasets: [{
+                            label: 'Niveau de Menace / Défi',
+                            data: [90, 80, 75],
+                            backgroundColor: [
+                                'rgba(239, 68, 68, 0.6)', 
+                                'rgba(249, 115, 22, 0.6)',
+                                'rgba(245, 158, 11, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgba(220, 38, 38, 1)',
+                                'rgba(234, 88, 12, 1)',
+                                'rgba(217, 119, 6, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: { display: true, text: 'Indice de Priorité Stratégique (estimé)' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: true
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            // Tab functionality
+            const tabFedBtn = document.getElementById('tab-fed-btn');
+            const tabQcBtn = document.getElementById('tab-qc-btn');
+            const tabFedContent = document.getElementById('tab-fed-content');
+            const tabQcContent = document.getElementById('tab-qc-content');
+            
+            if (tabFedBtn) {
+                tabFedBtn.addEventListener('click', () => {
+                    tabFedContent.classList.remove('hidden');
+                    tabQcContent.classList.add('hidden');
+                    tabFedBtn.classList.add('active');
+                    tabQcBtn.classList.remove('active');
+                });
+            }
+
+            if (tabQcBtn) {
+                tabQcBtn.addEventListener('click', () => {
+                    tabQcContent.classList.remove('hidden');
+                    tabFedContent.classList.add('hidden');
+                    tabQcBtn.classList.add('active');
+                    tabFedBtn.classList.remove('active');
+                });
+            }
+
+            // Active nav link on scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            window.onscroll = () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 68) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href').substring(1) === current) {
+                        a.classList.add('active');
+                    }
+                });
+            };
+        });
+    </script>
+</body>
+</html>
